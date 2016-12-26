@@ -139,3 +139,4 @@ async def init():
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init())
 loop.run_forever()
+# 需要把代码看明白，才能往下学
