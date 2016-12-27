@@ -5,9 +5,10 @@
 Configuration
 """
 
-__author__ = 'Michael Liao'
-
 import www.config_default as config_default
+import www.config_override as config_override
+
+__author__ = 'RunhwGuo'
 
 
 class Dict(dict):
@@ -43,20 +44,18 @@ def merge(defaults, override):
     return r
 
 
-def toDict(d):
-    D = Dict()
+def to_dict(d):
+    result = Dict()
     for k, v in d.items():
-        D[k] = toDict(v) if isinstance(v, dict) else v
-    return D
+        result[k] = to_dict(v) if isinstance(v, dict) else v
+    return result
 
 
 configs = config_default.configs
 
 try:
-    import config_override
-
     configs = merge(configs, config_override.configs)
 except ImportError:
     pass
 
-configs = toDict(configs)
+configs = to_dict(configs)

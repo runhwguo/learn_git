@@ -17,9 +17,10 @@ from aiohttp import web
 from jinja2 import Environment, FileSystemLoader
 
 from www.coroweb import add_routes, add_static
-from www import orm
+from www.orm import create_pool
+from www.config import configs
 
-__author__ = 'Michael Liao'
+__author__ = 'Runhwguo'
 
 logging.basicConfig(level=logging.INFO)
 
@@ -124,10 +125,8 @@ def datetime_filter(t):
 
 
 async def init():
-    await orm.create_pool(loop=loop, host='127.0.0.1', port=3306, user='root', password='root', db='awesome')
-    app = web.Application(loop=loop, middlewares=[
-        logger_factory, response_factory
-    ])
+    await create_pool(loop=loop, **configs['db'])
+    app = web.Application(middlewares=(logger_factory, response_factory))
     init_jinja2(app, filters=dict(datetime=datetime_filter))
     add_routes(app, 'handlers')
     add_static(app)
@@ -139,4 +138,3 @@ async def init():
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init())
 loop.run_forever()
-# 需要把代码看明白，才能往下学

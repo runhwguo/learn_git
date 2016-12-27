@@ -8,12 +8,14 @@ from www.coroweb import get
 from www.models import Blog
 from www.models import User
 
-__author__ = 'Michael Liao'
+__author__ = 'RunhwGuo'
 
 
+# 装饰器
 @get('/')
+# index = get('/)(index)
 async def index(request):
-    summary = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+    summary = '郭浩伟爱着程锡慧，他将会为了他们的家庭努力，好好工作，好好生活。'
     blogs = [
         Blog(id='1', name='Test Blog', summary=summary, created_at=time.time() - 120),
         Blog(id='2', name='Something New', summary=summary, created_at=time.time() - 3600),

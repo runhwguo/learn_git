@@ -15,14 +15,14 @@ from www.apis import APIError
 
 __author__ = 'RunhwGuo'
 
+"""
+Define decorator @get('/path')
+"""
+
 
 def get(path):
-    """
-    Define decorator @get('/path')
-    """
-
     def decorator(func):
-        @functools.wraps(func)
+        @functools.wraps(func)  # wrapper.__name__ = func.__name__ 防止函数名改变
         def wrapper(*args, **kw):
             return func(*args, **kw)
 
@@ -33,11 +33,12 @@ def get(path):
     return decorator
 
 
-def post(path):
-    """
-    Define decorator @post('/path')
-    """
+"""
+Define decorator @post('/path')
+"""
 
+
+def post(path):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kw):
@@ -160,12 +161,15 @@ class RequestHandler(object):
             return dict(error=e.error, data=e.data, message=e.message)
 
 
+# 映射/static/  --> 项目中实际的static目录
 def add_static(app):
+    # __file__当前文件
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
     app.router.add_static('/static/', path)
     logging.info('add static %s => %s' % ('/static/', path))
 
 
+# 注册函数 --> 路径
 def add_route(app, fn):
     method = getattr(fn, '__method__', None)
     path = getattr(fn, '__route__', None)
@@ -178,14 +182,16 @@ def add_route(app, fn):
     app.router.add_route(method, path, RequestHandler(app, fn))
 
 
+# 自动把handler模块的所有符合条件的函数注册了:
 def add_routes(app, module_name):
     n = module_name.rfind('.')
-    if n == (-1):
-        mod = __import__(module_name, globals(), locals())
+    if n == -1:
+        mod = __import__(module_name, globals())
     else:
         name = module_name[n + 1:]
-        mod = getattr(__import__(module_name[:n], globals(), locals(), [name]), name)
+        mod = getattr(__import__(module_name[:n], globals(), [name]), name)
     for attr in dir(mod):
+        # 把特殊变量去掉 例如__author__
         if attr.startswith('_'):
             continue
         fn = getattr(mod, attr)
